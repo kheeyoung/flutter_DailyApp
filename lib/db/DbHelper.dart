@@ -41,7 +41,8 @@ class DBHelper {
               'schedule_alarm bool,'
               'schedule_memo TEXT,'
               'schedule_isOver bool,'
-              'schedule_next INTEGER'
+              'schedule_next INTEGER,'
+              'schedule_alarmID INTEGER'
           ');',
         );
 
@@ -80,10 +81,27 @@ class DBHelper {
         'schedule_alarm': sd.schedule_alarm,
         'schedule_memo': sd.schedule_memo,
         'schedule_isOver' : false,
-        'schedule_next' : sd.schedule_next
+        'schedule_next' : sd.schedule_next,
+        'schedule_alarmID': sd.schedule_alarmID,
       }, // 추가할 데이터
       conflictAlgorithm: ConflictAlgorithm.replace, // 중복 데이터 처리 방법 설정
     );
+  }
+
+  //특정 일의 가장 마지막 알람(가장 큰)의 ID 가져오기
+  Future<int> getScheduleID() async{
+    String sql = 'SELECT MAX(ABS(schedule_alarmID)) FROM schedule;';
+    final db = await database; // 데이터베이스 인스턴스 가져오기
+    var list = await db.rawQuery(sql);
+
+    //절대값이라 항상 양수
+    String ID= list[0]["MAX(ABS(schedule_alarmID))"].toString();
+    int result=-1;
+    if(ID!="null"){
+      result=int.parse(ID);
+    }
+    print(sql);
+    return result;
   }
 
 
@@ -175,7 +193,8 @@ class DBHelper {
           list[i]["schedule_time"].toString(),
           alarm=="true"? true: false,
           list[i]["schedule_memo"].toString(),
-          int.parse(list[i]["schedule_next"].toString())
+          int.parse(list[i]["schedule_next"].toString()),
+          int.parse(list[i]["schedule_alarmID"].toString())
       );
       sdList.add(sd);
     }

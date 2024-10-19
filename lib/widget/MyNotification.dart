@@ -77,16 +77,10 @@ class MyNotification {
     selectedTime =
         await showTimePicker(
             context: context,
-            initialTime: TimeOfDay.now()
+            initialTime: TimeOfDay.now(),
+          initialEntryMode: TimePickerEntryMode.input
         );
 
-    if(otherTime!=null){
-      if(otherTime.hour>selectedTime!.hour ||
-          (otherTime.minute>selectedTime.minute && otherTime.hour>=selectedTime.hour)){
-        DialogBasic(context, "알람은 괴거로 설정 할 수 없으며, \n종료시간은 시작 시간 이후로 설정해주세요.");
-        return TimeOfDay.now();
-      }
-    }
     return selectedTime;
   }
 
