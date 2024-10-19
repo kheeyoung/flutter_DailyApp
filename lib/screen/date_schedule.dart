@@ -38,6 +38,7 @@ class _DateScheduleState extends State<DateSchedule> {
   String memo="";
   int schedule_nextID=0;
   String preSchedule="";
+
   @override
   Widget build(BuildContext context) {
     int year=widget.year;
@@ -132,9 +133,10 @@ class _DateScheduleState extends State<DateSchedule> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text("알림"),
+
                     const SizedBox(width: 10,),
                     mb.myOutLinedButton(()async{
-                      selectedTime=await mn.TimePicker(context, );
+                      selectedTime=await mn.TimePicker(context);
                       setState(() {});
                     },
 
@@ -225,32 +227,31 @@ class _DateScheduleState extends State<DateSchedule> {
                 //확인 버튼
                 OutlinedButton(
                     onPressed: ()async{
-                      
-
                       if(scheduleName!=""){
-                        
                         bool check= await dbHelper.checkSchedules(scheduleName, "$startYear $startMonth/$startDay");
                         
                         if(!check){
-                          Scheduledto sd =Scheduledto(
-                              0,
-                              scheduleName,
-                              "$startYear $startMonth/$startDay",
-                              "$endYear $endMonth/$endDay",
-                              selectedTime==null?"시간 설정":"${selectedTime!.hour}:${selectedTime!.minute}",
-                              alarm,
-                              memo,
-                              schedule_nextID
-                          );
-                          //DB 추가
-                          dbHelper.insertData(sd);
-                          //일정 추가
+                          //알림 추가
+                          int nextId= await dbHelper.getScheduleID();
+                          print(nextId);
+                          nextId=(nextId+1)*-1;
+                          print("------------");
+                          print(nextId);
                           if(alarm){
-                            DateTime time =DateTime(DateTime.now().year,
-                                DateTime.now().month,
-                                DateTime.now().day,
+                            
+                            nextId*=-1;
+                            DateTime time =DateTime(startYear!,
+                                startMonth!,
+                                startDay!,
                                 selectedTime!.hour,selectedTime!.minute);
                             String MyID="EndID"+scheduleName;
+
+                            //시간 설정에 문제가 있는 경우
+                            if(DateTime.now().hour>selectedTime!.hour ||
+                                (DateTime.now().minute>=selectedTime!.minute && DateTime.now().hour>=selectedTime!.hour)){
+                              mn.DialogBasic(context, "알람은 과거로 설정 할 수 없습니다.");
+                              return;
+                            }
 
                             LocalPushNotifications.showScheduleNotification(
                                 title: scheduleName,
@@ -259,9 +260,24 @@ class _DateScheduleState extends State<DateSchedule> {
                                 setTime: time,
                                 MychannelID: MyID,
                                 MychannelName: scheduleName+"EndName",
-                                ID: 1// 수정 필요!!
-                            );
+                                ID: nextId);
                           }
+
+                          //DB에 추가
+                          Scheduledto sd =Scheduledto(
+                              0,
+                              scheduleName,
+                              "$startYear $startMonth/$startDay",
+                              "$endYear $endMonth/$endDay",
+                              selectedTime==null?"시간 설정":"${selectedTime!.hour}:${selectedTime!.minute}",
+                              alarm,
+                              memo,
+                              schedule_nextID,
+                              nextId
+                          );
+                          dbHelper.insertData(sd);
+
+
                           mn.snackbarBasic(context, "일정 추가 성공!");
 
                         }
