@@ -2,7 +2,7 @@ import 'package:dailyapp/db/DbHelper.dart';
 import 'package:dailyapp/screen/addNewTimeLine.dart';
 import 'package:flutter/material.dart';
 
-import '../db/scheduleDTO.dart';
+import '../month_schedule/scheduleDTO.dart';
 
 class Timeline extends StatefulWidget {
   const Timeline({super.key});

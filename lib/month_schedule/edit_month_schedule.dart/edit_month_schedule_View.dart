@@ -1,23 +1,26 @@
 import 'package:dailyapp/db/DbHelper.dart';
-import 'package:dailyapp/db/scheduleDTO.dart';
+import 'package:dailyapp/month_schedule/scheduleDTO.dart';
 import 'package:dailyapp/methods/local_push_notifications.dart';
 import 'package:dailyapp/widget/MyButton.dart';
 import 'package:dailyapp/widget/MyNotification.dart';
 import 'package:flutter/material.dart';
 import 'package:dailyapp/widget/InputTextFormField.dart';
 
-class DateSchedule extends StatefulWidget {
-  const DateSchedule({super.key, required this.year, required this.month, required this.day});
+import '../month_schedule_View.dart';
+import 'edit_month_schedule_controller.dart';
+
+class EditMonthScheduleView extends StatefulWidget {
+  const EditMonthScheduleView({super.key, required this.year, required this.month, required this.day});
   final int year;
   final int month;
   final int day;
 
 
   @override
-  State<DateSchedule> createState() => _DateScheduleState();
+  State<EditMonthScheduleView> createState() => _EditMonthScheduleViewState();
 }
 
-class _DateScheduleState extends State<DateSchedule> {
+class _EditMonthScheduleViewState extends State<EditMonthScheduleView> {
   //DB 생성자
   DBHelper dbHelper=DBHelper();
   //위젯 생성자
@@ -25,6 +28,7 @@ class _DateScheduleState extends State<DateSchedule> {
   MyNotification mn=MyNotification();
   Mybutton mb = Mybutton();
   LocalPushNotifications ln= LocalPushNotifications();
+  EditMonthScheduleController emsc =EditMonthScheduleController();
   //변수
   String scheduleName="";
   int? startYear=0;
@@ -172,7 +176,7 @@ class _DateScheduleState extends State<DateSchedule> {
                             List<String> notOverScheduleNames=[];
                             Map<String,int> map={};
                             for(int i=0; i<snapshot.data!.length; i++){
-                              String scheduleName= snapshot.data![i].schedule_name+" : "+snapshot.data![i].schedule_start;
+                              String scheduleName= "${snapshot.data![i].schedule_name} : ${snapshot.data![i].schedule_start_month}/${snapshot.data![i].schedule_start_day}";
                               notOverScheduleNames.add(scheduleName);
                               int num =snapshot.data![i].schedule_id;
                               map[scheduleName]=num;
@@ -227,66 +231,30 @@ class _DateScheduleState extends State<DateSchedule> {
                 //확인 버튼
                 OutlinedButton(
                     onPressed: ()async{
-                      if(scheduleName!=""){
-                        bool check= await dbHelper.checkSchedules(scheduleName, "$startYear $startMonth/$startDay");
-                        
-                        if(!check){
-                          //알림 추가
-                          int nextId= await dbHelper.getScheduleID();
-                          print(nextId);
-                          nextId=(nextId+1)*-1;
-                          print("------------");
-                          print(nextId);
-                          if(alarm){
-                            
-                            nextId*=-1;
-                            DateTime time =DateTime(startYear!,
-                                startMonth!,
-                                startDay!,
-                                selectedTime!.hour,selectedTime!.minute);
-                            String MyID="EndID"+scheduleName;
+                      selectedTime ??= TimeOfDay.now();
+                      print(selectedTime);
 
-                            //시간 설정에 문제가 있는 경우
-                            if(DateTime.now().hour>selectedTime!.hour ||
-                                (DateTime.now().minute>=selectedTime!.minute && DateTime.now().hour>=selectedTime!.hour)){
-                              mn.DialogBasic(context, "알람은 과거로 설정 할 수 없습니다.");
-                              return;
-                            }
+                      Scheduledto sd =Scheduledto(
+                          0,
+                          scheduleName,
+                          startYear!,
+                          startMonth!,
+                          startDay!,
+                          endYear!,
+                          endMonth!,
+                          endDay!,
+                          selectedTime!.hour!,
+                          selectedTime!.minute,
+                          alarm,
+                          memo,
+                          schedule_nextID,
+                          0
+                      );
 
-                            LocalPushNotifications.showScheduleNotification(
-                                title: scheduleName,
-                                body: "월간 일정이 있습니다. \n Memo: "+memo,
-                                payload: "스케쥴 푸시 알림 데이터",
-                                setTime: time,
-                                MychannelID: MyID,
-                                MychannelName: scheduleName+"EndName",
-                                ID: nextId);
-                          }
-
-                          //DB에 추가
-                          Scheduledto sd =Scheduledto(
-                              0,
-                              scheduleName,
-                              "$startYear $startMonth/$startDay",
-                              "$endYear $endMonth/$endDay",
-                              selectedTime==null?"시간 설정":"${selectedTime!.hour}:${selectedTime!.minute}",
-                              alarm,
-                              memo,
-                              schedule_nextID,
-                              nextId
-                          );
-                          dbHelper.insertData(sd);
-
-
-                          mn.snackbarBasic(context, "일정 추가 성공!");
-
-                        }
-                        else{mn.snackbarBasic(context, "동일 날짜에 동일 일정이 있습니다.");}
-                        
-                      }
-                      else{mn.snackbarBasic(context, "일정명을 입력해주세요!");}
-                      
-                      
+                      String result= await emsc.insert_schedule_db(sd, selectedTime!);
+                      mn.snackbarBasic(context, result);
+                      Navigator.of(context).pushNamedAndRemoveUntil('/MonthScheduleView', (route) => false);
+                      //Navigator.push(context, MaterialPageRoute(builder: (context)=>MonthScheduleView()));
                     },
                     child: const Text("일정 추가")
                 )
