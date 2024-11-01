@@ -1,13 +1,14 @@
 import 'dart:ffi';
 
+import 'package:calendar_timeline/calendar_timeline.dart';
 import 'package:dailyapp/widget/MyButton.dart';
 import 'package:dailyapp/widget/MyNotification.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../db/DbHelper.dart';
-import '../db/scheduleDTO.dart';
-import '../screen/date_schedule.dart';
+import '../month_schedule/scheduleDTO.dart';
+
 
 class Event {
   String title;
@@ -21,7 +22,7 @@ class Mycalendar {
   DBHelper dbHelper=DBHelper();
 
 
-  MyCal(year, month, day, context, eventDaysStart, eventDaysEnd,MycalendarFormat ) {
+  MyCal(year, month, day, context, eventDaysStart, eventDaysEnd ) {
 
     return Column(
       children: [
@@ -32,11 +33,11 @@ class Mycalendar {
           firstDay: DateTime.utc(year, 01, 01),
           lastDay: DateTime.utc(year+10, 12, 31),
           availableGestures: AvailableGestures.none,
-          calendarFormat: MycalendarFormat,
+          calendarFormat: CalendarFormat.month,
           onDaySelected: (selectedDay, focusedDay) async{
 
-            List<Scheduledto> ssd=await dbHelper.getTodaysStartSchedules(selectedDay);
-            List<Scheduledto> esd=await dbHelper.getTodaysEndSchedules(selectedDay);
+            List<Scheduledto> ssd=await dbHelper.getMonthStartSchedules(selectedDay);
+            List<Scheduledto> esd=await dbHelper.getMonthEndSchedules(selectedDay);
             mn.showDetailDialog(context,selectedDay,ssd,esd);
           },
         headerVisible: false,
@@ -124,6 +125,22 @@ class Mycalendar {
   }
 
 
+  MyPomodoroCal(DateTime todayDate, fun){
+    return CalendarTimeline(
+      initialDate: DateTime(todayDate.year, todayDate.month, todayDate.day),
+      firstDate: DateTime(2000, 1, 1),
+      lastDate: DateTime(3000, 12, 31),
+      onDateSelected: fun,
+      leftMargin: 20,
+      monthColor: Colors.blueGrey,
+      dayColor: Colors.teal[200],
+      activeDayColor: Colors.white,
+      activeBackgroundDayColor: Colors.redAccent[100],
+      selectableDayPredicate: (date) =>
+      date.year < todayDate.year+11 && date.year > todayDate.year-11,
+      locale: 'en_ISO',
+    );
+  }
 
 
 }

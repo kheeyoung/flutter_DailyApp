@@ -1,20 +1,22 @@
 
 import 'package:dailyapp/db/DbHelper.dart';
-import 'package:dailyapp/db/dailyPomodoroDTO.dart';
-import 'package:dailyapp/screen/dailyPomodoro.dart';
+
+import 'package:dailyapp/month_schedule/month_schedule_controller.dart';
+
 import 'package:dailyapp/widget/InputTextFormField.dart';
 import 'package:dailyapp/widget/MyButton.dart';
 import 'package:dailyapp/widget/showMiniSchedule.dart';
 import 'package:flutter/material.dart';
 
-import '../methods/local_push_notifications.dart';
-import '../screen/date_schedule.dart';
+import '../month_schedule/edit_month_schedule.dart/edit_month_schedule_View.dart';
+
 
 class MyNotification {
   Showminischedule ss = Showminischedule();
   InputTextFormField itff = InputTextFormField();
   Mybutton mb =Mybutton();
   DBHelper db = DBHelper();
+  MonthScheduleController mcon =MonthScheduleController();
 
   snackbarBasic(context, textContents) {
     return ScaffoldMessenger.of(context).showSnackBar(
@@ -115,7 +117,7 @@ class MyNotification {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => DateSchedule(
+                              builder: (context) => EditMonthScheduleView(
                                   year: selectedDay.year,
                                   month: selectedDay.month,
                                   day: selectedDay.day)));
@@ -134,8 +136,6 @@ class MyNotification {
       },
     );
   }
-
-
 
 
 

@@ -1,8 +1,10 @@
+import 'package:dailyapp/month_schedule/edit_month_schedule.dart/edit_month_schedule_View.dart';
 import 'package:dailyapp/screen/intro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'methods/local_push_notifications.dart';
 import 'methods/message_page.dart';
+import 'month_schedule/month_schedule_View.dart';
 
 //푸시 알림 터치시 응답 처리용 경로
 final navigatorKey = GlobalKey<NavigatorState>();
@@ -41,6 +43,7 @@ class MyApp extends StatelessWidget {
         routes: {
           '/': (context) => const Intro(),
           '/message': (context) => const MessagePage(),
+          '/MonthScheduleView' : (context) => MonthScheduleView()
         },
       //home: Intro()
     );

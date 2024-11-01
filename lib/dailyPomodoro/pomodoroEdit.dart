@@ -4,12 +4,12 @@ import 'package:dailyapp/widget/MyButton.dart';
 import 'package:dailyapp/widget/MyNotification.dart';
 import 'package:flutter/material.dart';
 import 'package:dailyapp/methods/local_push_notifications.dart';
-import '../db/dailyPomodoroDTO.dart';
+import '../dailyPomodoro/daily_pomodoroDTO.dart';
 
 class Pomodoroedit extends StatefulWidget {
-  final DateTime selectedDay;
+ 
   final Dailypomodorodto dpd;
-  const Pomodoroedit({super.key, required this.selectedDay, required this.dpd});
+  const Pomodoroedit({super.key, required this.dpd});
 
   @override
   State<Pomodoroedit> createState() => _PomodoroeditState();
@@ -39,7 +39,7 @@ class _PomodoroeditState extends State<Pomodoroedit> {
   @override
   void initState() {
     Dailypomodorodto dpd=widget.dpd;
-    selectedDay=widget.selectedDay;
+    selectedDay=DateTime(dpd.DP_date_year, dpd.DP_date_month, dpd.DP_date_day);
     scheduleName= dpd.DP_name;
     selectedTimeStart=TimeOfDay(hour: int.parse(dpd.DP_startTime.substring(0,2)), minute: int.parse(dpd.DP_startTime.substring(3,5)));
     selectedTimeEnd=TimeOfDay(hour: int.parse(dpd.DP_endTime.substring(0,2)), minute: int.parse(dpd.DP_endTime.substring(3,5)));
@@ -212,11 +212,11 @@ class _PomodoroeditState extends State<Pomodoroedit> {
                         return;
                       }
             
-                      String date= "${selectedDay.year} ${selectedDay.month}/${selectedDay.day}";
+
                       //알림 설정
                       //만약 신규 등록의 경우 가장 최근 알림의 ID 받아오기
                       if(StartalarmID==0){
-                        int AlarmID = await db.getTodayPomoStartID(date);
+                        int AlarmID = await db.getTodayPomoStartID(selectedDay);
                         //각자 2,3씩 더해서 각자의 사용 가능한 알림 아이디로 만들기
                         StartalarmID=AlarmID+2;
                         EndalarmID=AlarmID+3;
@@ -249,14 +249,14 @@ class _PomodoroeditState extends State<Pomodoroedit> {
                         if(StartalarmID>0){ StartalarmID*=-1;}
                       }
                       if(EndalarmOn){
-                        DateTime time =DateTime(DateTime.now().year,
-                            DateTime.now().month,
-                            DateTime.now().day,
+                        DateTime time =DateTime(selectedDay.year,
+                            selectedDay.month,
+                            selectedDay.day,
                             selectedTimeEnd.hour,selectedTimeEnd.minute);
                         String MyID="EndID"+scheduleName;
             
                         if(EndalarmID<0){ EndalarmID*=-1;}
-                        if(!time.isBefore(DateTime.now())){
+                        if(!time.isBefore(selectedDay)){
                           LocalPushNotifications.showScheduleNotification(
                               title: scheduleName,
                               body: "일정 종료 시간입니다. \n Memo: "+memo,
@@ -275,7 +275,9 @@ class _PomodoroeditState extends State<Pomodoroedit> {
                         Dailypomodorodto dpd = Dailypomodorodto(
                             id,
                             scheduleName,
-                            date,
+                            selectedDay.year,
+                            selectedDay.month,
+                            selectedDay.day,
                             selectedTimeStart.toString().substring(10,15),
                             selectedTimeEnd.toString().substring(10,15),
                             StartalarmID,

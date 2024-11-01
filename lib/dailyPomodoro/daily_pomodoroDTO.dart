@@ -2,7 +2,9 @@ class Dailypomodorodto{
 
   int _DP_id;
   String _DP_name;
-  String _DP_date;
+  int _DP_date_year;
+  int _DP_date_month;
+  int _DP_date_day;
   String _DP_startTime;
   String _DP_endTime;
   //알림 설정이 안되어 있으면 -1, 되어 있으면 양수
@@ -11,22 +13,26 @@ class Dailypomodorodto{
   String _DP_memo;
   bool _DP_isOver;
 
-  int get DP_id => _DP_id;
 
-  set DP_id(int value) {
-    _DP_id = value;
-  }
 
   Dailypomodorodto(
       this._DP_id,
       this._DP_name,
-      this._DP_date,
+      this._DP_date_year,
+      this._DP_date_month,
+      this._DP_date_day,
       this._DP_startTime,
       this._DP_endTime,
       this._DP_StartAlarmID,
       this._DP_EndAlarmID,
       this._DP_memo,
       this._DP_isOver);
+
+  int get DP_id => _DP_id;
+
+  set DP_id(int value) {
+    _DP_id = value;
+  }
 
   String get DP_name => _DP_name;
 
@@ -66,10 +72,22 @@ class Dailypomodorodto{
     _DP_startTime = value;
   }
 
-  String get DP_date => _DP_date;
+  int get DP_date_day => _DP_date_day;
 
-  set DP_date(String value) {
-    _DP_date = value;
+  set DP_date_day(int value) {
+    _DP_date_day = value;
+  }
+
+  int get DP_date_month => _DP_date_month;
+
+  set DP_date_month(int value) {
+    _DP_date_month = value;
+  }
+
+  int get DP_date_year => _DP_date_year;
+
+  set DP_date_year(int value) {
+    _DP_date_year = value;
   }
 
   set DP_name(String value) {
