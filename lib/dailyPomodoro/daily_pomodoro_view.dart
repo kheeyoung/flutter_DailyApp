@@ -1,23 +1,15 @@
-import 'package:calendar_timeline/calendar_timeline.dart';
 import 'package:dailyapp/dailyPomodoro/daily_pomodoro_controller.dart';
 import 'package:dailyapp/dailyPomodoro/pomodoroEdit.dart';
 import 'package:dailyapp/db/DbHelper.dart';
-import 'package:dailyapp/dailyPomodoro/daily_pomodoroDTO.dart';
-<<<<<<< HEAD
 import 'package:dailyapp/month_schedule/month_schedule_View.dart';
-=======
->>>>>>> origin/master
 import 'package:dailyapp/widget/MyCalendar.dart';
 import 'package:dailyapp/widget/MyNotification.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 import '../controller/time_controller.dart';
 import '../month_schedule/scheduleDTO.dart';
-<<<<<<< HEAD
-import '../screen/intro.dart';
-=======
->>>>>>> origin/master
+import 'daily_pomodoroDTO.dart';
+
 
 class DailypomodoroView extends StatefulWidget {
   const DailypomodoroView({super.key});
@@ -42,7 +34,7 @@ class _DailypomodoroViewState extends State<DailypomodoroView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-<<<<<<< HEAD
+
       appBar: AppBar(
         title: Text("일간"),
         leading: IconButton(
@@ -59,9 +51,9 @@ class _DailypomodoroViewState extends State<DailypomodoroView> {
               icon: Icon(Icons.calendar_month))
         ],
       ),
-=======
-      appBar: AppBar(title: Text("일간"),),
->>>>>>> origin/master
+
+
+
       body: SingleChildScrollView(
         child: Center(
           child: Column(

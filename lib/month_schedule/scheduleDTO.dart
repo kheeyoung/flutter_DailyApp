@@ -11,7 +11,6 @@ class Scheduledto{
   int _schedule_alarm_minute;
   bool _schedule_alarm;
   String _schedule_memo;
-  int _schedule_next;
   int _schedule_alarmID;
 
   Scheduledto(
@@ -27,7 +26,6 @@ class Scheduledto{
       this._schedule_alarm_minute,
       this._schedule_alarm,
       this._schedule_memo,
-      this._schedule_next,
       this._schedule_alarmID);
 
   int get schedule_id => _schedule_id;
@@ -44,11 +42,6 @@ class Scheduledto{
     _schedule_alarmID = value;
   }
 
-  int get schedule_next => _schedule_next;
-
-  set schedule_next(int value) {
-    _schedule_next = value;
-  }
 
   String get schedule_memo => _schedule_memo;
 

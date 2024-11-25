@@ -1,5 +1,5 @@
+import 'package:dailyapp/month_schedule/edit_month_schedule.dart/edit_month_schedule_View.dart';
 import 'package:flutter/material.dart';
-
 import '../month_schedule/scheduleDTO.dart';
 class Showminischedule{
 
@@ -7,8 +7,8 @@ class Showminischedule{
     List<Row> w=[];
     for(int i=0; i<sd.length;i++){
       String s= sd[i].schedule_name;
-      String start= "${sd[i].schedule_start_year} ${sd[i].schedule_start_month}/${sd[i].schedule_start_month}";
-      String end= "${sd[i].schedule_end_year} ${sd[i].schedule_end_month}/${sd[i].schedule_end_month}";
+      String start= "${sd[i].schedule_start_year} ${sd[i].schedule_start_month}/${sd[i].schedule_start_day}";
+      String end= "${sd[i].schedule_end_year} ${sd[i].schedule_end_month}/${sd[i].schedule_end_day}";
       w.add(Row(
         crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -33,39 +33,57 @@ class Showminischedule{
     );
   }
 
-  MyFullSchedule(List<Scheduledto> sd){
-    List<Column> w=[];
-    for(int i=0; i<sd.length;i++){
-      String start= "${sd[i].schedule_start_year} ${sd[i].schedule_start_month}/${sd[i].schedule_start_month}";
-      String end= "${sd[i].schedule_end_year} ${sd[i].schedule_end_month}/${sd[i].schedule_end_month}";
-      String name= sd[i].schedule_name;
-      String time= "${sd[i].schedule_alarm_hour}:${sd[i].schedule_alarm_minute}";
-      String alarm= sd[i].schedule_alarm.toString();
-      String memo= sd[i].schedule_memo;
 
-      time=time=="시간 설정" ? "":time;
-      alarm=alarm=="0"?"OFF":"ON";
-      w.add(Column(
-        children: [
-          Text(name),
-          Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children:[
-                Text("$start ~ $end"),
-              ]
-          ),
-          Text(time),
-          Text(alarm),
-          Text(memo),
-          SizedBox(height: 20,),
-          Container(width: 500,
-              child: Divider(thickness: 1.0)),
-        ],
-      ));
+  DataTable showScheduleTable(List<Scheduledto> list, context) {
+    //열
+    List<DataColumn> dataColumn = [
+      const DataColumn(label: Text("일정명")),
+      const DataColumn(label: Text("시작 기간")),
+      const DataColumn(label: Text("종료 기간")),
+      const DataColumn(label: Text("알림")),
+      const DataColumn(label: Text("메모")),
+    ];
+    //행
+    List<DataRow> _getRows() {
+      List<DataRow> dataRow = [];
+      for (Scheduledto i in list)  {
+        String alarm = i.schedule_alarm==0 ? "OFF" : "ON";
+        String memo = i.schedule_memo.isNotEmpty ? i.schedule_memo : "-";
+        String name=i.schedule_name;
+        if(name.length>10){name="${name.substring(0,8)}...";}
+        List<DataCell> cells = [
+          DataCell(Text(name, style: TextStyle(color: Colors.redAccent[100]),)),
+          DataCell(Text("${i.schedule_start_month}/${i.schedule_start_day}", style: TextStyle(color: Colors.black87),)),
+          DataCell(Text("${i.schedule_end_month}/${i.schedule_end_day}", style: TextStyle(color: Colors.black87),)),
+          DataCell(Text(alarm, style: TextStyle(color: Colors.black87),)),
+          DataCell(Text(memo, style: TextStyle(color: Colors.black87),)),
+        ];
+
+        dataRow.add(
+            DataRow(
+                onSelectChanged: (newValue) { //일정 수정
+                  //일정 수정으로 가기
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>EditMonthScheduleView(
+                    year: i.schedule_start_year,
+                    month: i.schedule_start_month,
+                    day:i.schedule_start_day,
+                    sd: i,
+                  )));
+                },
+                cells: cells
+            )
+        );
+      }
+      return dataRow;
     }
-    return Center(
-      child: SingleChildScrollView(child: Column(children: w,))
+
+    return DataTable(
+      showCheckboxColumn: false,
+      horizontalMargin: 10.0,
+      columnSpacing: 20.0,
+
+      columns: dataColumn,
+      rows: _getRows(),
     );
   }
 

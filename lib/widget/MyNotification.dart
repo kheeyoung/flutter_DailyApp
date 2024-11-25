@@ -86,7 +86,7 @@ class MyNotification {
     return selectedTime;
   }
 
-  showDetailDialog(context, DateTime selectedDay, ssd, esd) {
+  showDetailDialog(context, DateTime selectedDay, sd) {
     showDialog(
       context: context,
       builder: (context) {
@@ -100,18 +100,13 @@ class MyNotification {
                   height: 20,
                 ),
                 Text("${selectedDay.month}월 ${selectedDay.day}일"),
-                const SizedBox(
-                  height: 20,
-                ),
+
                 SizedBox(width: 500, child: Divider(thickness: 2.0)),
-                const SizedBox(
-                  height: 20,
-                ),
-                Text("시작 일정"),
-                ss.MyFullSchedule(ssd),
+
+
+                ss.showScheduleTable(sd, context),
                 Container(width: 500, child: Divider(thickness: 2.0)),
-                Text("종료 일정"),
-                ss.MyFullSchedule(esd),
+
                 OutlinedButton(
                     onPressed: () {
                       Navigator.push(

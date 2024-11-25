@@ -36,15 +36,13 @@ class Mycalendar {
           calendarFormat: CalendarFormat.month,
           onDaySelected: (selectedDay, focusedDay) async{
 
-            List<Scheduledto> ssd=await dbHelper.getMonthStartSchedules(selectedDay);
-            List<Scheduledto> esd=await dbHelper.getMonthEndSchedules(selectedDay);
-            mn.showDetailDialog(context,selectedDay,ssd,esd);
+            List<Scheduledto> sd=await dbHelper.getTodaySchedules(selectedDay);
+
+            mn.showDetailDialog(context,selectedDay,sd);
           },
         headerVisible: false,
           rangeSelectionMode: RangeSelectionMode.toggledOn,
           calendarStyle: const CalendarStyle(
-
-
             // marker 여러개 일 때 cell 영역을 벗어날지 여부
             canMarkersOverflow: false,
             // 자동정렬 여부

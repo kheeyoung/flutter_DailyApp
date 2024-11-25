@@ -77,8 +77,7 @@ class _MonthScheduleViewState extends State<MonthScheduleView> {
                 //달력
                 FutureBuilder(
                   future: mcon.getMarkedSchedule(date),
-                  builder:
-                      (BuildContext context, AsyncSnapshot<List> snapshot) {
+                  builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
                     if (snapshot.hasData) {
                       return mc.MyCal(date.year, date.month, date.day, context,
                           snapshot.data![0], snapshot.data![1]);

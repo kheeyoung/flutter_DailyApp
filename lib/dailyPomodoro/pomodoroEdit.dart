@@ -292,7 +292,7 @@ class _PomodoroeditState extends State<Pomodoroedit> {
                         else{  //수정인 경우
                           await db.updatePomodoro(dpd);
                           mn.snackbarBasic(context, "수정 성공");
-                          print(EndalarmID);
+
                         }
                       }
                       catch(e){

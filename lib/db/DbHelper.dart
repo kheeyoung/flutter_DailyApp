@@ -46,7 +46,6 @@ class DBHelper {
           'schedule_alarm bool,'
           'schedule_memo TEXT,'
           'schedule_isOver bool,'
-          'schedule_next INTEGER,'
           'schedule_alarmID INTEGER'
           ');',
         );
@@ -103,15 +102,14 @@ class DBHelper {
         'schedule_start_year': sd.schedule_start_year,
         'schedule_start_month': sd.schedule_start_month,
         'schedule_start_day': sd.schedule_start_day,
-        'schedule_end_year': sd.schedule_start_year,
-        'schedule_end_month': sd.schedule_start_month,
-        'schedule_end_day': sd.schedule_start_day,
+        'schedule_end_year': sd.schedule_end_year,
+        'schedule_end_month': sd.schedule_end_month,
+        'schedule_end_day': sd.schedule_end_day,
         'schedule_alarm_hour': sd.schedule_alarm_hour,
         'schedule_alarm_minute': sd.schedule_alarm_minute,
         'schedule_alarm': sd.schedule_alarm,
         'schedule_memo': sd.schedule_memo,
         'schedule_isOver': false,
-        'schedule_next': sd.schedule_next,
         'schedule_alarmID': sd.schedule_alarmID,
       }, // 추가할 데이터
       conflictAlgorithm: ConflictAlgorithm.replace, // 중복 데이터 처리 방법 설정
@@ -160,13 +158,15 @@ class DBHelper {
     return sdList;
   }
 
-  //해당 월의 끝나는 일정 다 가져 오기
-  Future<List<Scheduledto>> getMonthEndSchedules(selectedDay) async {
+  //해당 월의 일정 다 가져 오기
+  Future<List<Scheduledto>> getMonthSchedules(selectedDay) async {
     String year = selectedDay.year.toString();
     String month = selectedDay.month.toString();
 
     String sql =
-        'SELECT * FROM schedule WHERE schedule_end_year=${year} AND schedule_end_month=$month;';
+        'SELECT * FROM schedule WHERE '
+        '(schedule_start_year=$year AND schedule_start_month= $month) OR  '
+        '(schedule_end_year=$year AND schedule_end_month= $month);';
     final db = await database; // 데이터베이스 인스턴스 가져오기
     var list = await db.rawQuery(sql);
     int n = list.length;
@@ -235,7 +235,6 @@ class DBHelper {
           list[i]["schedule_alarm_minute"].toInt(),
           alarm == "true" ? true : false,
           list[i]["schedule_memo"].toString(),
-          int.parse(list[i]["schedule_next"].toString()),
           int.parse(list[i]["schedule_alarmID"].toString()));
       sdList.add(sd);
     }
@@ -253,15 +252,15 @@ class DBHelper {
         'schedule_start_year': sd.schedule_start_year,
         'schedule_start_month': sd.schedule_start_month,
         'schedule_start_day': sd.schedule_start_day,
-        'schedule_end_year': sd.schedule_start_year,
-        'schedule_end_month': sd.schedule_start_month,
-        'schedule_end_day': sd.schedule_start_day,
+        'schedule_end_year': sd.schedule_end_year,
+        'schedule_end_month': sd.schedule_end_month,
+        'schedule_end_day': sd.schedule_end_day,
         'schedule_alarm_hour': sd.schedule_alarm_hour,
         'schedule_alarm_minute': sd.schedule_alarm_minute,
         'schedule_alarm': sd.schedule_alarm,
         'schedule_memo': sd.schedule_memo,
         'schedule_isOver': false,
-        'schedule_next': sd.schedule_next,
+
         'schedule_alarmID': sd.schedule_alarmID,
       }, // 수정할 데이터
       where: 'id = ?', // 수정할 데이터의 조건 설정

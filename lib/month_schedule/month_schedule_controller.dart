@@ -1,15 +1,10 @@
-import 'package:dailyapp/controller/time_controller.dart';
+
 import 'package:dailyapp/db/DbHelper.dart';
 import 'package:dailyapp/month_schedule/scheduleDTO.dart';
-
-import 'package:dailyapp/widget/MyCalendar.dart';
-import 'package:dailyapp/widget/MyNotification.dart';
 import 'package:dailyapp/widget/showMiniSchedule.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:table_calendar/table_calendar.dart';
 
-import '../widget/MyButton.dart';
 
 
 class MonthScheduleController{
@@ -23,11 +18,9 @@ class MonthScheduleController{
     List<DateTime> eventDaysStart=[];
     List<DateTime> eventDaysEnd=[];
 
-    List<Scheduledto> schedule= await db.getMonthStartSchedules(date);
-
-    DateFormat format = new DateFormat("yyyy M/d");
-
+    List<Scheduledto> schedule= await db.getMonthSchedules(date);
     for(int i=0; i<schedule.length; i++){
+
       s=DateTime(schedule[i].schedule_start_year,
           schedule[i].schedule_start_month,
           schedule[i].schedule_start_day);

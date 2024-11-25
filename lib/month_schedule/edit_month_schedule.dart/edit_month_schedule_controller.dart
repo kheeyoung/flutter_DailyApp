@@ -60,8 +60,31 @@ class EditMonthScheduleController {
           ID: nextId);
     }
 
-    print(nextId);
     return nextId;
   }
+
+  update_schedule_db(Scheduledto sd, TimeOfDay time,String formalName) async{
+    if (sd.schedule_name == "") {
+      return "스케줄 명은 필수 입니다.";
+    }
+    bool check = await db.checkSchedules(sd);
+
+    if (sd.schedule_name!=formalName &&!check) {
+      return "동일 날짜에 동일 일정이 있습니다.";
+    }
+
+    //알림 업데이트
+    sd.schedule_alarmID = await insert_alarm_db(sd, time);
+
+    if (sd.schedule_alarmID == 0) {
+      return "알람은 과거로 설정 할 수 없습니다.";
+    }
+
+    //DB에 추가
+    db.updateData(sd.schedule_id, sd);
+
+    return "수정 성공!";
+  }
+
 
 }

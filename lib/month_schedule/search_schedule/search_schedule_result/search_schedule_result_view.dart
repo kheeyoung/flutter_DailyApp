@@ -1,4 +1,5 @@
 import 'package:dailyapp/month_schedule/search_schedule/search_schedule_result/search_schedule_result_controller.dart';
+import 'package:dailyapp/widget/showMiniSchedule.dart';
 import 'package:flutter/material.dart';
 
 import '../../scheduleDTO.dart';
@@ -15,6 +16,7 @@ class SearchScheduleResultView extends StatefulWidget {
 
 class _SearchScheduleResultViewState extends State<SearchScheduleResultView> {
   SearchScheduleResultController ssrc = SearchScheduleResultController();
+  Showminischedule ss =Showminischedule();
 
   @override
   Widget build(BuildContext context) {
@@ -26,12 +28,11 @@ class _SearchScheduleResultViewState extends State<SearchScheduleResultView> {
           children: [
             Text("$word검색 결과"),
 
-            //퓨터 빌더 빼면 되는데 넣으면 안 됨 왜죠
             FutureBuilder(
                 future: ssrc.getSearchWord(word),
                 builder: (BuildContext context, AsyncSnapshot<List<Scheduledto>> snapshot) {
                   if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                    return ssrc.showResultSchedule(snapshot.data!);
+                    return ss.showScheduleTable(snapshot.data!, context);
                   }
                   else {
                     return Text("검색 결과가 없습니다.");
